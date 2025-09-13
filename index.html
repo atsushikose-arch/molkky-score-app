@@ -1,304 +1,284 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Mölkky スコアボード</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rounded+M+1c:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Rounded M+ 1c', sans-serif;
-      background: #fff;
-      color: #000;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-    }
-    .top {
-        display: flex;
-        flex-wrap: nowrap;
-        padding: 10px;
-        border-bottom: 2px solid #ccc;
-        /* flex: 1 1 auto; 削除 */
-        overflow: hidden;
-        justify-content: center;
-        flex-shrink: 0; /* 上下の縮み防止 */
-    }
-    .team {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 5px;
-      min-width: 120px;
-      box-sizing: border-box;
-      border: 2px solid transparent;
-      border-radius: 8px;
-    }
-    .team.selected {
-      border: 2px solid yellow;
-      background-color: #fff8c0;
-    }
-    .team-name {
-      margin-bottom: 6px;
-      text-align: center;
-      line-height: 1.2;
-      font-size: 18px;
-      border: none;
-      background: transparent;
-      font-weight: bold;
-      width: 100%;
-    }
-    .team-name:focus {
-      outline: none;
-      border-bottom: 1px solid #aaa;
-    }
-    .score {
-      display: flex;
-      gap: 4px;
-      justify-content: center;
-      align-items: center;
-      min-height: 20vw;
-      margin-bottom: 6px;
-    }
-    /* スコア画像の高さを自動調整 */
-    .score img {
-        max-height: 25vh;  /* 画面高さの25%まで */
-        width: auto;
-    }
-    .misses {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 5px;
-    }
-    .miss {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid #ddd;
-      background: transparent;
-      cursor: pointer;
-    }
-    .miss.active {
-      background: red;
-    }
-    /* .bottom は固定高さではなく自動で必要な分だけ */
-    .bottom {
-        display: flex;
-        flex-direction: column;
-        padding: 5px;
-        gap: 5px;
-        flex-shrink: 0;
-    }
-    .controls {
-      display: flex;
-      flex-direction: row;
-      gap: 5px;
-      justify-content: space-around;
-    }
-    .controls button {
-      padding: 8px 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      cursor: pointer;
-      flex-grow: 1;
-    }
-    .mode-toggle {
-      background: #eee;
-      padding: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      user-select: none;
-      flex-grow: 1;
-    }
-    .keys {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-      grid-auto-rows: 50px;
-      gap: 5px;
-    }
-    .key {
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      background: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    @media screen and (orientation: landscape) {
-      .container {
-        flex-direction: column;
-      }
-      .bottom {
-        flex-direction: column;
-      }
-      .controls {
-        flex-direction: row;
-      }
-      .keys {
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Mölkky スコアボード</title>
+<link href="https://fonts.googleapis.com/css2?family=Rounded+M+1c:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: 'Rounded M+ 1c', sans-serif;
+    background: #fff;
+    color: #000;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.top {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 10px;
+    border-bottom: 2px solid #ccc;
+    flex: 1 1 auto;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px;
+    min-width: 120px;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    border-radius: 8px;
+}
+
+.team.selected { border: 2px solid yellow; background-color: #fff8c0; }
+
+.team-name {
+    margin-bottom: 6px;
+    text-align: center;
+    line-height: 1.2;
+    font-size: 18px;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    width: 100%;
+}
+.team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
+
+.score {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.score img {
+    width: auto;
+}
+
+.misses {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+.miss {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    background: transparent;
+    cursor: pointer;
+}
+.miss.active { background: red; }
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    gap: 5px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    justify-content: space-around;
+}
+
+.controls button {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+.mode-toggle {
+    background: #eee;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    user-select: none;
+    flex-grow: 1;
+}
+
+.keys {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    grid-auto-rows: 50px;
+    gap: 5px;
+}
+
+.key {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+@media screen and (orientation: landscape) {
+    .container { flex-direction: column; }
+    .bottom { flex-direction: column; }
+    .controls { flex-direction: row; }
+    .keys { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); }
+}
+</style>
 </head>
 <body>
-  <div class="container">
+<div class="container">
     <div class="top" id="top"></div>
     <div class="bottom">
-      <div class="controls">
-        <button onclick="addTeam()">Team ＋</button>
-        <button onclick="removeTeam()">Team −</button>
-        <button onclick="undo()">↩ 取消</button>
-        <div id="modeToggle" class="mode-toggle">Mode</div>
-      </div>
-      <div class="keys" id="keys"></div>
+        <div class="controls">
+            <button onclick="addTeam()">Team ＋</button>
+            <button onclick="removeTeam()">Team −</button>
+            <button onclick="undo()">↩ 取消</button>
+            <div id="modeToggle" class="mode-toggle">Mode</div>
+        </div>
+        <div class="keys" id="keys"></div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const scoreBaseURL = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_';
+<script>
+const scoreBaseURL = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_';
 
-    let teams = [
-      { name: "チームA", score: 0, misses: 0 },
-      { name: "チームB", score: 0, misses: 0 },
-    ];
-    let selectedTeam = 0;
-    let addMode = true;
-    let history = [];
+let teams = [
+    { name: "チームA", score: 0, misses: 0 },
+    { name: "チームB", score: 0, misses: 0 },
+];
+let selectedTeam = 0;
+let addMode = true;
+let history = [];
 
-    const topElement = document.getElementById("top");
-    const keys = document.getElementById("keys");
-    const modeToggle = document.getElementById("modeToggle");
+const topElement = document.getElementById("top");
+const keys = document.getElementById("keys");
+const modeToggle = document.getElementById("modeToggle");
 
-    function renderScore(team) {
-      const scoreDiv = document.createElement("div");
-      scoreDiv.className = "score";
-      const digits = team.score.toString().split("");
-      digits.forEach(d => {
+function renderScore(team, teamWidth) {
+    const scoreDiv = document.createElement("div");
+    scoreDiv.className = "score";
+    const digits = team.score.toString().split("");
+    const imgHeight = Math.min(teamWidth / digits.length * 0.9, 100); // 最大100px
+    digits.forEach(d => {
         const img = document.createElement("img");
         img.src = `${scoreBaseURL}${d}.png`;
         img.alt = d;
+        img.style.height = imgHeight + "px";
+        img.style.width = "auto";
         scoreDiv.appendChild(img);
-      });
-      return scoreDiv;
-    }
+    });
+    return scoreDiv;
+}
 
-    function render() {
-      topElement.innerHTML = "";
-      teams.forEach((team, index) => {
+function render() {
+    topElement.innerHTML = "";
+    const topWidth = topElement.offsetWidth || window.innerWidth;
+    const numTeams = teams.length;
+    const teamWidth = Math.max(120, topWidth / numTeams - 10); // 少し余白
+    teams.forEach((team, index) => {
         const div = document.createElement("div");
         div.className = "team" + (index === selectedTeam ? " selected" : "");
+        div.style.width = teamWidth + "px";
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.className = "team-name";
         nameInput.value = team.name;
-        nameInput.addEventListener("input", (e) => {
-          team.name = e.target.value;
-        });
+        nameInput.addEventListener("input", (e) => { team.name = e.target.value; });
 
-        const scoreImg = renderScore(team);
+        const scoreImg = renderScore(team, teamWidth);
 
         const misses = document.createElement("div");
         misses.className = "misses";
         for (let i = 0; i < 3; i++) {
-          const miss = document.createElement("div");
-          miss.className = "miss" + (i < team.misses ? " active" : "");
-          miss.onclick = (e) => {
-            e.stopPropagation();
-            team.misses += i < team.misses ? -1 : 1;
-            render();
-          };
-          misses.appendChild(miss);
+            const miss = document.createElement("div");
+            miss.className = "miss" + (i < team.misses ? " active" : "");
+            miss.onclick = (e) => { e.stopPropagation(); team.misses += i < team.misses ? -1 : 1; render(); };
+            misses.appendChild(miss);
         }
 
         div.appendChild(nameInput);
         div.appendChild(scoreImg);
         div.appendChild(misses);
-
-        div.onclick = () => {
-          selectedTeam = index;
-          render();
-        };
-
+        div.onclick = () => { selectedTeam = index; render(); };
         topElement.appendChild(div);
-      });
-      updateModeDisplay();
-    }
+    });
+    updateModeDisplay();
+}
 
-    function updateModeDisplay() {
-      modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode";
-    }
+function updateModeDisplay() { modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode"; }
+modeToggle.onclick = () => { addMode = !addMode; updateModeDisplay(); };
 
-    modeToggle.onclick = () => {
-      addMode = !addMode;
-      updateModeDisplay();
-    };
-
-    function createKeys() {
-      if (!keys.hasChildNodes()) {
+function createKeys() {
+    if (!keys.hasChildNodes()) {
         for (let i = 1; i <= 12; i++) {
-          const btn = document.createElement("div");
-          btn.className = "key";
-          btn.textContent = i;
-          btn.onclick = () => applyScore(i);
-          keys.appendChild(btn);
+            const btn = document.createElement("div");
+            btn.className = "key";
+            btn.textContent = i;
+            btn.onclick = () => applyScore(i);
+            keys.appendChild(btn);
         }
-      }
     }
+}
 
-    function applyScore(value) {
-      const team = teams[selectedTeam];
-      history.push(JSON.parse(JSON.stringify(teams)));
-
-      if (addMode) {
+function applyScore(value) {
+    const team = teams[selectedTeam];
+    history.push(JSON.parse(JSON.stringify(teams)));
+    if (addMode) {
         team.score += value;
         if (team.score > 50) team.score = 25;
         team.misses = 0;
-      } else {
-        team.score = Math.max(0, team.score - value);
-      }
-      render();
-    }
-
-    function addTeam() {
-      if (teams.length >= 10) return;
-      teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 });
-      render();
-    }
-
-    function removeTeam() {
-      if (teams.length <= 1) return;
-      teams.splice(selectedTeam, 1);
-      selectedTeam = Math.max(0, teams.length - 1);
-      render();
-    }
-
-    function undo() {
-      if (history.length === 0) return;
-      teams = history.pop();
-      selectedTeam = Math.min(selectedTeam, teams.length - 1);
-      render();
-    }
-
+    } else { team.score = Math.max(0, team.score - value); }
     render();
-    createKeys();
-    window.addEventListener("resize", render);
-  </script>
+}
+
+function addTeam() { 
+    if (teams.length >= 10) return; 
+    teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); 
+    render(); 
+}
+
+function removeTeam() { 
+    if (teams.length <= 1) return; 
+    teams.splice(selectedTeam,1); 
+    selectedTeam=Math.max(0, teams.length-1); 
+    render(); 
+}
+
+function undo() { 
+    if (history.length === 0) return; 
+    teams = history.pop(); 
+    selectedTeam=Math.min(selectedTeam, teams.length-1); 
+    render(); 
+}
+
+render();
+createKeys();
+window.addEventListener("resize", render);
+</script>
 </body>
 </html>
