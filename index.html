@@ -21,13 +21,14 @@
       flex: 1 1 auto;
     }
     .top {
-      display: flex;
-      flex-wrap: nowrap;
-      padding: 10px;
-      border-bottom: 2px solid #ccc;
-      flex: 1 1 auto;
-      overflow: hidden;
-      justify-content: center;
+        display: flex;
+        flex-wrap: nowrap;
+        padding: 10px;
+        border-bottom: 2px solid #ccc;
+        /* flex: 1 1 auto; 削除 */
+        overflow: hidden;
+        justify-content: center;
+        flex-shrink: 0; /* 上下の縮み防止 */
     }
     .team {
       display: flex;
@@ -66,9 +67,10 @@
       min-height: 20vw;
       margin-bottom: 6px;
     }
+    /* スコア画像の高さを自動調整 */
     .score img {
-      height: min(20vw, 100px);
-      width: auto;
+        max-height: 25vh;  /* 画面高さの25%まで */
+        width: auto;
     }
     .misses {
       display: flex;
@@ -86,11 +88,13 @@
     .miss.active {
       background: red;
     }
+    /* .bottom は固定高さではなく自動で必要な分だけ */
     .bottom {
-      display: flex;
-      flex-direction: column;
-      padding: 5px;
-      gap: 5px;
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        gap: 5px;
+        flex-shrink: 0;
     }
     .controls {
       display: flex;
