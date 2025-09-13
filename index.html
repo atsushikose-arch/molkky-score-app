@@ -15,23 +15,21 @@ body {
     display: flex;
     flex-direction: column;
 }
-
 .container {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+    justify-content: flex-start;
 }
-
 .top {
     display: flex;
     flex-wrap: nowrap;
     padding: 10px;
     border-bottom: 2px solid #ccc;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     overflow: hidden;
     justify-content: center;
 }
-
 .team {
     display: flex;
     flex-direction: column;
@@ -43,9 +41,7 @@ body {
     border: 2px solid transparent;
     border-radius: 8px;
 }
-
 .team.selected { border: 2px solid yellow; background-color: #fff8c0; }
-
 .team-name {
     margin-bottom: 6px;
     text-align: center;
@@ -57,19 +53,18 @@ body {
     width: 100%;
 }
 .team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
-
 .score {
     display: flex;
     gap: 4px;
     justify-content: center;
     align-items: center;
+    max-height: 25vh;
     margin-bottom: 6px;
 }
-
 .score img {
+    max-height: 20vh;
     width: auto;
 }
-
 .misses {
     display: flex;
     gap: 8px;
@@ -84,21 +79,18 @@ body {
     cursor: pointer;
 }
 .miss.active { background: red; }
-
 .bottom {
     display: flex;
     flex-direction: column;
     padding: 5px;
     gap: 5px;
 }
-
 .controls {
     display: flex;
     flex-direction: row;
     gap: 5px;
     justify-content: space-around;
 }
-
 .controls button {
     padding: 8px 12px;
     font-size: 16px;
@@ -107,7 +99,6 @@ body {
     cursor: pointer;
     flex-grow: 1;
 }
-
 .mode-toggle {
     background: #eee;
     padding: 8px;
@@ -121,7 +112,6 @@ body {
     user-select: none;
     flex-grow: 1;
 }
-
 .keys {
     width: 100%;
     display: grid;
@@ -129,7 +119,6 @@ body {
     grid-auto-rows: 50px;
     gap: 5px;
 }
-
 .key {
     border: 2px solid #ccc;
     border-radius: 8px;
@@ -140,7 +129,12 @@ body {
     font-size: 18px;
     cursor: pointer;
 }
-
+.version {
+    font-size: 14px;
+    text-align: center;
+    margin: 2px 0;
+    color: #666;
+}
 @media screen and (orientation: landscape) {
     .container { flex-direction: column; }
     .bottom { flex-direction: column; }
@@ -160,12 +154,12 @@ body {
             <div id="modeToggle" class="mode-toggle">Mode</div>
         </div>
         <div class="keys" id="keys"></div>
+        <div class="version">Ver 1.0.0</div>
     </div>
 </div>
 
 <script>
 const scoreBaseURL = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_';
-
 let teams = [
     { name: "チームA", score: 0, misses: 0 },
     { name: "チームB", score: 0, misses: 0 },
@@ -178,17 +172,14 @@ const topElement = document.getElementById("top");
 const keys = document.getElementById("keys");
 const modeToggle = document.getElementById("modeToggle");
 
-function renderScore(team, teamWidth) {
+function renderScore(team) {
     const scoreDiv = document.createElement("div");
     scoreDiv.className = "score";
     const digits = team.score.toString().split("");
-    const imgHeight = Math.min(teamWidth / digits.length * 0.9, 100); // 最大100px
     digits.forEach(d => {
         const img = document.createElement("img");
         img.src = `${scoreBaseURL}${d}.png`;
         img.alt = d;
-        img.style.height = imgHeight + "px";
-        img.style.width = "auto";
         scoreDiv.appendChild(img);
     });
     return scoreDiv;
@@ -196,13 +187,9 @@ function renderScore(team, teamWidth) {
 
 function render() {
     topElement.innerHTML = "";
-    const topWidth = topElement.offsetWidth || window.innerWidth;
-    const numTeams = teams.length;
-    const teamWidth = Math.max(120, topWidth / numTeams - 10); // 少し余白
     teams.forEach((team, index) => {
         const div = document.createElement("div");
         div.className = "team" + (index === selectedTeam ? " selected" : "");
-        div.style.width = teamWidth + "px";
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
@@ -210,7 +197,7 @@ function render() {
         nameInput.value = team.name;
         nameInput.addEventListener("input", (e) => { team.name = e.target.value; });
 
-        const scoreImg = renderScore(team, teamWidth);
+        const scoreImg = renderScore(team);
 
         const misses = document.createElement("div");
         misses.className = "misses";
@@ -256,25 +243,9 @@ function applyScore(value) {
     render();
 }
 
-function addTeam() { 
-    if (teams.length >= 10) return; 
-    teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); 
-    render(); 
-}
-
-function removeTeam() { 
-    if (teams.length <= 1) return; 
-    teams.splice(selectedTeam,1); 
-    selectedTeam=Math.max(0, teams.length-1); 
-    render(); 
-}
-
-function undo() { 
-    if (history.length === 0) return; 
-    teams = history.pop(); 
-    selectedTeam=Math.min(selectedTeam, teams.length-1); 
-    render(); 
-}
+function addTeam() { if (teams.length >= 10) return; teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); render(); }
+function removeTeam() { if (teams.length <= 1) return; teams.splice(selectedTeam,1); selectedTeam=Math.max(0, teams.length-1); render(); }
+function undo() { if (history.length === 0) return; teams = history.pop(); selectedTeam=Math.min(selectedTeam, teams.length-1); render(); }
 
 render();
 createKeys();
