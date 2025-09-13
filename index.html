@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mölkky Score App</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .teams {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .team {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 220px;
+      text-align: center;
+    }
+    .score {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 10px 0;
+    }
+    .score img {
+      width: 15vw;
+      max-width: 80px;
+      height: auto;
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .undo {
+      background: #ff9800;
+    }
+    .undo:hover {
+      background: #e68900;
+    }
+  </style>
+</head>
+<body>
+  <h1>みなとモルックスコア</h1>
+  <div class="teams" id="teams"></div>
+
+  <script>
+    const MAX_TEAMS = 4;
+    const MAX_SCORE = 50;
+    const teams = [];
+    const histories = [];
+
+    function createTeam(name) {
+      return { name, score: 0 };
+    }
+
+    function renderTeams() {
+      const container = document.getElementById("teams");
+      container.innerHTML = "";
+      teams.forEach((team, index) => {
+        const teamDiv = document.createElement("div");
+        teamDiv.className = "team";
+        
+        // チーム名
+        const name = document.createElement("h2");
+        name.textContent = team.name;
+        teamDiv.appendChild(name);
+
+        // スコア画像
+        const scoreDiv = document.createElement("div");
+        scoreDiv.className = "score";
+        const scoreStr = String(team.score);
+        scoreDiv.innerHTML = "";
+        for (const digit of scoreStr) {
+          const img = document.createElement("img");
+          img.src = `https://raw.githubusercontent.com/atsushikose-arch/molkky-score-images/main/score_${digit}.png`;
+          img.alt = digit;
+          scoreDiv.appendChild(img);
+        }
+        teamDiv.appendChild(scoreDiv);
+
+        // ボタン
+        const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "buttons";
+        for (let i = 1; i <= 12; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          btn.onclick = () => updateScore(index, i);
+          buttonsDiv.appendChild(btn);
+        }
+        const missBtn = document.createElement("button");
+        missBtn.textContent = "×";
+        missBtn.onclick = () => updateScore(index, 0);
+        buttonsDiv.appendChild(missBtn);
+
+        const undoBtn = document.createElement("button");
+        undoBtn.textContent = "取消";
+        undoBtn.className = "undo";
+        undoBtn.onclick = () => undoScore(index);
+        buttonsDiv.appendChild(undoBtn);
+
+        teamDiv.appendChild(buttonsDiv);
+
+        container.appendChild(teamDiv);
+      });
+    }
+
+    function updateScore(teamIndex, points) {
+      histories.push(JSON.parse(JSON.stringify(teams)));
+      teams[teamIndex].score += points;
+      if (teams[teamIndex].score > MAX_SCORE) {
+        teams[teamIndex].score = 25; // バースト処理
+      }
+      renderTeams();
+    }
+
+    function undoScore(teamIndex) {
+      if (histories.length > 0) {
+        const prevState = histories.pop();
+        teams.splice(0, teams.length, ...prevState);
+        renderTeams();
+      }
+    }
+
+    // 初期化
+    for (let i = 1; i <= MAX_TEAMS; i++) {
+      teams.push(createTeam(`チーム${i}`));
+    }
+    renderTeams();
+  </script>
+</body>
+</html>
