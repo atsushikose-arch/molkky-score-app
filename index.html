@@ -71,14 +71,20 @@ body {
     margin-bottom: 5px;
 }
 .miss {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #ddd;
-    background: transparent;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    color: #ccc;     /* 未使用は薄いグレー */
+    border: none;
 }
-.miss.active { background: red; }
+.miss.active {
+    color: red;      /* アクティブは赤色 */
+    font-weight: bold;
+}
 .bottom {
     display: flex;
     flex-direction: column;
@@ -204,7 +210,12 @@ function render() {
         for (let i = 0; i < 3; i++) {
             const miss = document.createElement("div");
             miss.className = "miss" + (i < team.misses ? " active" : "");
-            miss.onclick = (e) => { e.stopPropagation(); team.misses += i < team.misses ? -1 : 1; render(); };
+            miss.textContent = "×";
+            miss.onclick = (e) => {
+                e.stopPropagation();
+                team.misses += i < team.misses ? -1 : 1;
+                render();
+            };
             misses.appendChild(miss);
         }
 
