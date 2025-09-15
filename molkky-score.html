@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Mölkky スコアボード</title>
+<link href="https://fonts.googleapis.com/css2?family=Rounded+M+1c:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: 'Rounded M+ 1c', sans-serif;
+    background: #fff;
+    color: #000;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.top {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 10px;
+    border-bottom: 2px solid #ccc;
+    flex: 1 1 auto; /* 縦画面で伸縮 */
+    overflow: visible; /* スクロールなし */
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px;
+    font-size: 18px;
+    min-width: 120px;
+    box-sizing: border-box;
+}
+
+.team-name {
+    margin-bottom: 6px;
+    text-align: center;
+    line-height: 1.2;
+    font-size: 18px;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    width: 100%;
+}
+.team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
+
+.score {
+    font-weight: bold;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    margin-bottom: 4px;
+    font-size: min(18vw, 3.5rem);
+}
+
+.misses {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+.miss {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    background: transparent;
+    cursor: pointer;
+}
+.miss.active { background: red; }
+.selected { background: yellow; }
+
+.bottom {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    gap: 5px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    justify-content: space-around;
+}
+
+.controls button {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+.mode-toggle {
+    background: #eee;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    user-select: none;
+    flex-grow: 1;
+}
+
+.keys {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    grid-auto-rows: 50px; /* 正方形に近い */
+    gap: 5px;
+}
+
+.key {
+    border: 2px solid #ccc; /* 枠線追加 */
+    border-radius: 8px;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 横画面用 */
+@media screen and (orientation: landscape) {
+    .container {
+        flex-direction: row;
+    }
+    .top {
+        flex: 1 1 auto;
+        border-bottom: none;
+        border-right: 2px solid #ccc;
+    }
+    .bottom {
+        flex-direction: column;
+        width: 150px; /* 横画面テンキー幅 */
+        padding: 5px;
+        gap: 5px;
+        justify-content: flex-start; /* 上寄せ */
+    }
+    .controls {
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+    .keys {
+        grid-template-columns: 1fr; /* 縦並び */
+        grid-auto-rows: 50px;
+        margin-top: 0;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="top" id="top"></div>
+    <div class="bottom">
+        <div class="controls">
+            <button onclick="addTeam()">Team ＋</button>
+            <button onclick="removeTeam()">Team −</button>
+            <button onclick="undo()">↩ 取消</button>
+            <div id="modeToggle" class="mode-toggle">Mode</div>
+        </div>
+        <div class="keys" id="keys"></div>
+    </div>
+</div>
+
+<script>
+let teams = [
+    { name: "チームA", score: 0, misses: 0 },
+    { name: "チームB", score: 0, misses: 0 },
+];
+let selectedTeam = 0;
+let addMode = true;
+let history = [];
+
+const topElement = document.getElementById("top");
+const keys = document.getElementById("keys");
+const modeToggle = document.getElementById("modeToggle");
+
+function render() {
+    topElement.innerHTML = "";
+    const numTeams = teams.length;
+    const topWidth = topElement.offsetWidth || window.innerWidth;
+    const baseTeamWidth = Math.floor(topWidth / numTeams);
+    const minTeamWidth = 120;
+
+    teams.forEach((team, index) => {
+        const div = document.createElement("div");
+        div.className = "team" + (index === selectedTeam ? " selected" : "") + (team.misses >= 3 ? " grayed-out" : "");
+        div.style.width = `${Math.max(baseTeamWidth, minTeamWidth)}px`;
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.className = "team-name";
+        nameInput.value = team.name;
+
+        const stop = (e) => e.stopPropagation();
+        ["click","pointerdown","mousedown","touchstart","keydown"].forEach(evt => {
+            nameInput.addEventListener(evt, stop, {passive: true});
+        });
+
+        nameInput.addEventListener("input", (e) => { team.name = e.target.value; });
+
+        const score = document.createElement("div");
+        score.className = "score";
+        score.textContent = team.score;
+
+        const misses = document.createElement("div");
+        misses.className = "misses";
+        for (let i = 0; i < 3; i++) {
+            const miss = document.createElement("div");
+            miss.className = "miss" + (i < team.misses ? " active" : "");
+            miss.onclick = (e) => { e.stopPropagation(); team.misses += i < team.misses ? -1 : 1; render(); };
+            misses.appendChild(miss);
+        }
+
+        div.appendChild(nameInput);
+        div.appendChild(score);
+        div.appendChild(misses);
+
+        div.onclick = () => { if (selectedTeam !== index) { selectedTeam = index; render(); } };
+        topElement.appendChild(div);
+    });
+    updateModeDisplay();
+}
+
+function updateModeDisplay() { modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode"; }
+modeToggle.onclick = () => { addMode = !addMode; updateModeDisplay(); };
+
+if (!keys.hasChildNodes()) {
+    for (let i = 1; i <= 12; i++) {
+        const btn = document.createElement("div");
+        btn.className = "key";
+        btn.textContent = i;
+        btn.onclick = () => applyScore(i);
+        keys.appendChild(btn);
+    }
+}
+
+function applyScore(value) {
+    const team = teams[selectedTeam];
+    history.push(JSON.parse(JSON.stringify(teams)));
+    if (addMode) {
+        team.score += value;
+        if (team.score > 50) team.score = 25;
+        team.misses = 0;
+    } else { team.score = Math.max(0, team.score - value); }
+    render();
+}
+
+function addTeam() { if (teams.length >= 10) return; teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); render(); }
+function removeTeam() { if (teams.length <= 1) return; teams.splice(selectedTeam,1); selectedTeam=Math.max(0, Math.min(selectedTeam,teams.length-1)); render(); }
+function undo() { if (history.length === 0) return; teams = history.pop(); selectedTeam=Math.min(selectedTeam, teams.length-1); render(); }
+
+render();
+window.addEventListener("resize", render);
+</script>
+</body>
+</html>
