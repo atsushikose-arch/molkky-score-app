@@ -35,7 +35,6 @@ body {
     align-items: center;
     justify-content: center; /* 縦中央 */
     padding: 5px;
-    font-size: 18px;
     min-width: 120px;
     box-sizing: border-box;
 }
@@ -44,7 +43,7 @@ body {
     margin-bottom: 6px;
     text-align: center;
     line-height: 1.2;
-    font-size: 44px; /* 倍に拡大 */
+    font-size: 22px; /* フォント大きく */
     border: none;
     background: transparent;
     font-weight: bold;
@@ -54,28 +53,30 @@ body {
 
 .score {
     font-weight: bold;
-    line-height: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 80px;
+    align-items: center;      
+    justify-content: center;  
+    min-height: 80px;          
     margin-bottom: 4px;
-    font-size: 36vmin; /* 倍に拡大 */
+    font-size: 18vmin;        /* スコアを大きく表示 */
 }
 
 .misses {
     display: flex;
-    gap: 8px;
+    gap: 20px; /* 間隔を広く */
     margin-bottom: 5px;
 }
 .miss {
-    font-size: 48px; /* ×マークのサイズ */
+    font-size: 16vmin;   /* × を大きく表示（元の8倍程度） */
+    color: #ccc;         /* 未使用は薄いグレー */
     cursor: pointer;
-    user-select: none;
+    line-height: 1;
 }
 .miss.active {
-    color: red;
+    color: red;          /* 使用済みは赤色 */
+    font-weight: bold;
 }
+
 .selected { background: yellow; }
 
 .bottom {
@@ -83,7 +84,7 @@ body {
     flex-direction: column;
     padding: 5px;
     gap: 5px;
-    align-items: center;
+    align-items: center; 
 }
 
 .controls {
@@ -117,6 +118,7 @@ body {
     flex-grow: 1;
 }
 
+/* 入力キーを横2段に */
 .keys {
     width: 100%;
     display: grid;
@@ -138,12 +140,12 @@ body {
     cursor: pointer;
     user-select: none;
 }
-
 .key:active {
     background: #ddd;
     transform: scale(0.95);
 }
 
+/* 横画面用 */
 @media screen and (orientation: landscape) {
     .container { flex-direction: column; }
     .top { flex: 1 1 auto; border-bottom: 2px solid #ccc; border-right: none; }
@@ -197,9 +199,8 @@ function render() {
         nameInput.className = "team-name";
         nameInput.value = team.name;
 
-        const stop = (e) => e.stopPropagation();
         ["click","pointerdown","mousedown","touchstart","keydown"].forEach(evt => {
-            nameInput.addEventListener(evt, stop, {passive: true});
+            nameInput.addEventListener(evt, e => e.stopPropagation(), {passive: true});
         });
         nameInput.addEventListener("input", (e) => { team.name = e.target.value; });
 
@@ -213,11 +214,7 @@ function render() {
             const miss = document.createElement("div");
             miss.className = "miss" + (i < team.misses ? " active" : "");
             miss.textContent = "×";
-            miss.onclick = (e) => { 
-                e.stopPropagation(); 
-                team.misses += i < team.misses ? -1 : 1; 
-                render(); 
-            };
+            miss.onclick = (e) => { e.stopPropagation(); team.misses += i < team.misses ? -1 : 1; render(); };
             misses.appendChild(miss);
         }
 
@@ -251,9 +248,7 @@ function applyScore(value) {
         team.score += value;
         if (team.score > 50) team.score = 25;
         team.misses = 0;
-    } else { 
-        team.score = Math.max(0, team.score - value); 
-    }
+    } else { team.score = Math.max(0, team.score - value); }
     render();
 }
 
