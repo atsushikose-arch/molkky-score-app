@@ -78,11 +78,11 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: #ccc;     /* 未使用は薄いグレー */
+    color: #ccc;
     border: none;
 }
 .miss.active {
-    color: red;      /* アクティブは赤色 */
+    color: red;
     font-weight: bold;
 }
 .bottom {
@@ -96,27 +96,22 @@ body {
     flex-direction: row;
     gap: 5px;
     justify-content: space-around;
+    flex-wrap: wrap;
 }
-.controls button {
+.controls button, .mode-toggle, .select-style {
     padding: 8px 12px;
     font-size: 16px;
     border-radius: 10px;
     border: 2px solid #ccc;
     cursor: pointer;
     flex-grow: 1;
+    margin: 2px;
 }
 .mode-toggle {
     background: #eee;
-    padding: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 10px;
-    border: 2px solid #ccc;
-    user-select: none;
-    flex-grow: 1;
 }
 .keys {
     width: 100%;
@@ -141,12 +136,6 @@ body {
     margin: 2px 0;
     color: #666;
 }
-@media screen and (orientation: landscape) {
-    .container { flex-direction: column; }
-    .bottom { flex-direction: column; }
-    .controls { flex-direction: row; }
-    .keys { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); }
-}
 </style>
 </head>
 <body>
@@ -158,14 +147,29 @@ body {
             <button onclick="removeTeam()">Team −</button>
             <button onclick="undo()">↩ 取消</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
+            <!-- 画像スタイル選択 -->
+            <select id="imageStyle" class="select-style" onchange="changeImageStyle()">
+                <option value="">デフォルト</option>
+                <option value="numbers_colorful">Colorful</option>
+                <option value="numbers_tokyotower">Tokyo Tower</option>
+                <option value="numbers_gradation">Gradation</option>
+                <option value="numbers_tokyotowerwalking">Tower Walking</option>
+                <option value="numbers_minato-ku">Minato-ku</option>
+            </select>
         </div>
         <div class="keys" id="keys"></div>
-        <div class="version">Ver 1.0.0</div>
+        <div class="version">Ver 1.1.0</div>
     </div>
 </div>
 
 <script>
-const scoreBaseURL = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_';
+let currentImageStyle = ""; // デフォルトは空（molkky-score-images/ 直下）
+
+function getScoreBaseURL() {
+    const base = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/';
+    return currentImageStyle ? `${base}${currentImageStyle}/score_` : `${base}score_`;
+}
+
 let teams = [
     { name: "チームA", score: 0, misses: 0 },
     { name: "チームB", score: 0, misses: 0 },
@@ -177,6 +181,7 @@ let history = [];
 const topElement = document.getElementById("top");
 const keys = document.getElementById("keys");
 const modeToggle = document.getElementById("modeToggle");
+const imageStyleSelect = document.getElementById("imageStyle");
 
 function renderScore(team) {
     const scoreDiv = document.createElement("div");
@@ -184,7 +189,7 @@ function renderScore(team) {
     const digits = team.score.toString().split("");
     digits.forEach(d => {
         const img = document.createElement("img");
-        img.src = `${scoreBaseURL}${d}.png`;
+        img.src = `${getScoreBaseURL()}${d}.png`;
         img.alt = d;
         scoreDiv.appendChild(img);
     });
@@ -257,6 +262,11 @@ function applyScore(value) {
 function addTeam() { if (teams.length >= 10) return; teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); render(); }
 function removeTeam() { if (teams.length <= 1) return; teams.splice(selectedTeam,1); selectedTeam=Math.max(0, teams.length-1); render(); }
 function undo() { if (history.length === 0) return; teams = history.pop(); selectedTeam=Math.min(selectedTeam, teams.length-1); render(); }
+
+function changeImageStyle() {
+    currentImageStyle = imageStyleSelect.value;
+    render();
+}
 
 render();
 createKeys();
