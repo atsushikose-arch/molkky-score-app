@@ -43,10 +43,10 @@ body {
 }
 .team.selected { border: 2px solid yellow; background-color: #fff8c0; }
 .team-name {
-    margin-bottom: 6px;
+    margin-bottom: 10px;
     text-align: center;
     line-height: 1.2;
-    font-size: 18px;
+    font-size: 36px;
     border: none;
     background: transparent;
     font-weight: bold;
@@ -55,14 +55,14 @@ body {
 .team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
 .score {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     justify-content: center;
     align-items: center;
-    max-height: 25vh;
-    margin-bottom: 6px;
+    max-height: 40vh;
+    margin: 20px 0;
 }
 .score img {
-    max-height: 20vh;
+    max-height: 35vh;
     width: auto;
 }
 .misses {
@@ -98,26 +98,39 @@ body {
     justify-content: space-around;
     flex-wrap: wrap;
 }
-.controls button, .mode-toggle, .select-style {
+.controls button {
     padding: 8px 12px;
     font-size: 16px;
     border-radius: 10px;
     border: 2px solid #ccc;
     cursor: pointer;
     flex-grow: 1;
-    margin: 2px;
 }
 .mode-toggle {
     background: #eee;
+    padding: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    user-select: none;
+    flex-grow: 1;
+}
+.theme-selector {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    flex-grow: 1;
 }
 .keys {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    grid-auto-rows: 50px;
+    grid-auto-rows: 60px;
     gap: 5px;
 }
 .key {
@@ -127,7 +140,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
 }
 .version {
@@ -135,6 +148,12 @@ body {
     text-align: center;
     margin: 2px 0;
     color: #666;
+}
+@media screen and (orientation: landscape) {
+    .container { flex-direction: column; }
+    .bottom { flex-direction: column; }
+    .controls { flex-direction: row; flex-wrap: wrap; }
+    .keys { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); }
 }
 </style>
 </head>
@@ -147,14 +166,14 @@ body {
             <button onclick="removeTeam()">Team −</button>
             <button onclick="undo()">↩ 取消</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
-            <!-- 画像スタイル選択 -->
-            <select id="imageStyle" class="select-style" onchange="changeImageStyle()">
-                <option value="">デフォルト</option>
-                <option value="numbers_colorful">Colorful</option>
-                <option value="numbers_tokyotower">Tokyo Tower</option>
-                <option value="numbers_gradation">Gradation</option>
-                <option value="numbers_tokyotowerwalking">Tower Walking</option>
-                <option value="numbers_minato-ku">Minato-ku</option>
+            <!-- ★ テーマ選択 -->
+            <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
+                <option value="">default</option>
+                <option value="numbers_colorful">colorful</option>
+                <option value="numbers_tokyotower">tokyo tower</option>
+                <option value="numbers_gradation">gradation</option>
+                <option value="numbers_tokyotowerwalking">tokyo tower walking</option>
+                <option value="numbers_minato-ku">minato-ku</option>
             </select>
         </div>
         <div class="keys" id="keys"></div>
@@ -163,13 +182,6 @@ body {
 </div>
 
 <script>
-let currentImageStyle = ""; // デフォルトは空（molkky-score-images/ 直下）
-
-function getScoreBaseURL() {
-    const base = 'https://github.com/atsushikose-arch/molkky-score-images/raw/main/';
-    return currentImageStyle ? `${base}${currentImageStyle}/score_` : `${base}score_`;
-}
-
 let teams = [
     { name: "チームA", score: 0, misses: 0 },
     { name: "チームB", score: 0, misses: 0 },
@@ -177,11 +189,19 @@ let teams = [
 let selectedTeam = 0;
 let addMode = true;
 let history = [];
+let currentTheme = ""; // デフォルトは直下
 
 const topElement = document.getElementById("top");
 const keys = document.getElementById("keys");
 const modeToggle = document.getElementById("modeToggle");
-const imageStyleSelect = document.getElementById("imageStyle");
+
+function getScoreImageURL(digit) {
+    if (currentTheme === "") {
+        return `https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_${digit}.png`;
+    } else {
+        return `https://github.com/atsushikose-arch/molkky-score-images/raw/main/${currentTheme}/score_${digit}.png`;
+    }
+}
 
 function renderScore(team) {
     const scoreDiv = document.createElement("div");
@@ -189,7 +209,7 @@ function renderScore(team) {
     const digits = team.score.toString().split("");
     digits.forEach(d => {
         const img = document.createElement("img");
-        img.src = `${getScoreBaseURL()}${d}.png`;
+        img.src = getScoreImageURL(d);
         img.alt = d;
         scoreDiv.appendChild(img);
     });
@@ -233,7 +253,9 @@ function render() {
     updateModeDisplay();
 }
 
-function updateModeDisplay() { modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode"; }
+function updateModeDisplay() {
+    modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode";
+}
 modeToggle.onclick = () => { addMode = !addMode; updateModeDisplay(); };
 
 function createKeys() {
@@ -255,16 +277,31 @@ function applyScore(value) {
         team.score += value;
         if (team.score > 50) team.score = 25;
         team.misses = 0;
-    } else { team.score = Math.max(0, team.score - value); }
+    } else {
+        team.score = Math.max(0, team.score - value);
+    }
     render();
 }
 
-function addTeam() { if (teams.length >= 10) return; teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 }); render(); }
-function removeTeam() { if (teams.length <= 1) return; teams.splice(selectedTeam,1); selectedTeam=Math.max(0, teams.length-1); render(); }
-function undo() { if (history.length === 0) return; teams = history.pop(); selectedTeam=Math.min(selectedTeam, teams.length-1); render(); }
-
-function changeImageStyle() {
-    currentImageStyle = imageStyleSelect.value;
+function addTeam() {
+    if (teams.length >= 10) return;
+    teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 });
+    render();
+}
+function removeTeam() {
+    if (teams.length <= 1) return;
+    teams.splice(selectedTeam,1);
+    selectedTeam=Math.max(0, teams.length-1);
+    render();
+}
+function undo() {
+    if (history.length === 0) return;
+    teams = history.pop();
+    selectedTeam=Math.min(selectedTeam, teams.length-1);
+    render();
+}
+function changeTheme(theme) {
+    currentTheme = theme;
     render();
 }
 
