@@ -61,10 +61,9 @@ body {
     max-height: 40vh;
     margin: 20px 0;
 }
-/* スコア画像を少し小さく */
 .score img {
-    max-height: 18vh; /* ← 35vh から下げる */
-    width: auto;
+    max-height: 18vh !important;
+    width: auto !important;
 }
 .misses {
     display: flex;
@@ -72,9 +71,9 @@ body {
     margin-bottom: 5px;
 }
 .miss {
-    width: 40px;
-    height: 40px;
-    font-size: 32px;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 32px !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -178,7 +177,7 @@ body {
             </select>
         </div>
         <div class="keys" id="keys"></div>
-        <div class="version">Ver 1.1.4</div>
+        <div class="version">Ver 1.1.5</div>
     </div>
 </div>
 
