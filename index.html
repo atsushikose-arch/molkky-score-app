@@ -247,7 +247,12 @@ function render() {
         div.appendChild(nameInput);
         div.appendChild(scoreImg);
         div.appendChild(misses);
-        div.onclick = () => { selectedTeam = index; render(); };
+        div.onclick = (e) => {
+        // 入力フィールドをクリックした場合は処理しない
+        if (e.target.classList.contains("team-name")) return;
+        selectedTeam = index;
+        render();
+        };
         topElement.appendChild(div);
     });
     updateModeDisplay();
