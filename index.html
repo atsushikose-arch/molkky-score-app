@@ -128,15 +128,15 @@ body {
 }
 .keys-area {
     display: flex;
-    gap: 50px;
-    margin-top: 25px;
+    gap: 3vmin;
+    margin-top: 2vmin;
 }
 .keys {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    grid-auto-rows: 100px;
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(10vmin, 1fr));
+    grid-auto-rows: 11vmin;
+    gap: 2vmin;
 }
 .key {
     border: 2px solid #ccc;
@@ -145,7 +145,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 72px;
+    font-size: 7vmin;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
@@ -155,7 +155,7 @@ body {
     transform: scale(0.95);
 }
 .undo-button {
-    min-width: 120px;
+    min-width: 15vmin;
     background: #ff9800;
     color: white;
     font-weight: bold;
@@ -167,15 +167,15 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
-    padding: 10px;
+    gap: 0.5vmin;
+    padding: 1vmin;
 }
 .undo-button .icon {
-    font-size: 60px;
+    font-size: 6vmin;
     line-height: 1;
 }
 .undo-button .text {
-    font-size: 18px;
+    font-size: 2vmin;
     line-height: 1;
 }
 .undo-button:active {
@@ -193,14 +193,14 @@ body {
     .bottom { flex-direction: column; }
     .controls { flex-direction: row; flex-wrap: wrap; }
     .keys-area {
-        margin-top: 25px;
+        margin-top: 2vmin;
     }
     .keys {
         grid-template-columns: repeat(6, 1fr);
-        grid-auto-rows: 90px;
+        grid-auto-rows: 10vmin;
     }
     .undo-button {
-        min-width: 100px;
+        min-width: 12vmin;
     }
 }
 </style>
@@ -233,7 +233,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.3.0</div>
+        <div class="version">Ver 1.3.1</div>
     </div>
 </div>
 
