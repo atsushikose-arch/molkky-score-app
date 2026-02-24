@@ -257,10 +257,10 @@ body {
             <div class="keys" id="keys"></div>
             <button class="undo-button" onclick="undo()">
                 <span class="icon">↩</span>
-                <span class="text">元に戻す</span>
+                <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.4.1</div>
+        <div class="version">Ver 1.4.2</div>
     </div>
 </div>
 
@@ -397,7 +397,7 @@ function changeTheme(theme) {
     render();
 }
 function forceReload() {
-    if (!confirm('最新版にリロードしますか？\n（チーム名・チーム数・スコアがすべてリセットされます）')) return;
+    if (!confirm('最新版にリロードしますか？\n（チーム名・チーム数・スコアがすべてリセットされます。元に戻せません）')) return;
     const url = location.href.split('?')[0] + '?v=' + Date.now();
     location.href = url;
 }
