@@ -307,7 +307,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.7.1</div>
+        <div class="version">Ver 1.7.2</div>
     </div>
 </div>
 
@@ -327,10 +327,16 @@ const keys = document.getElementById("keys");
 const modeToggle = document.getElementById("modeToggle");
 
 function getScoreImageURL(digit) {
-    if (currentTheme === "") {
-        return `https://github.com/atsushikose-arch/molkky-score-images/raw/main/score_${digit}.png`;
-    } else {
-        return `https://github.com/atsushikose-arch/molkky-score-images/raw/main/${currentTheme}/score_${digit}.png`;
+    const base = "https://raw.githubusercontent.com/atsushikose-arch/molkky-score-images/main";
+    return currentTheme === ""
+        ? `${base}/score_${digit}.png`
+        : `${base}/${currentTheme}/score_${digit}.png`;
+}
+
+function preloadScoreImages() {
+    for (let d = 0; d <= 9; d++) {
+        const img = new Image();
+        img.src = getScoreImageURL(d);
     }
 }
 
@@ -564,6 +570,7 @@ function undo() {
 }
 function changeTheme(theme) {
     currentTheme = theme;
+    preloadScoreImages();
     render();
 }
 function forceReload() {
@@ -580,6 +587,7 @@ function resetScores() {
 
 render();
 createKeys();
+preloadScoreImages();
 window.addEventListener("resize", render);
 </script>
 </body>
