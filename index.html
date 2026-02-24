@@ -12,8 +12,8 @@
 body {
     margin: 0;
     font-family: 'Rounded M+ 1c', sans-serif;
-    background: #fff;
-    color: #000;
+    background: #0d1f0d;
+    color: #fff;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -28,7 +28,7 @@ body {
     display: flex;
     flex-wrap: nowrap;
     padding: 10px;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     flex: 0 1 auto;
     overflow: hidden;
     justify-content: center;
@@ -42,9 +42,9 @@ body {
     min-width: 120px;
     box-sizing: border-box;
     border: 2px solid transparent;
-    border-radius: 8px;
+    border-radius: 12px;
 }
-.team.selected { border: 2px solid yellow; background-color: #fff8c0; }
+.team.selected { border: 2px solid #7ed321; background: rgba(126,211,33,0.12); }
 .team-name {
     margin-bottom: 0;
     text-align: center;
@@ -54,8 +54,9 @@ body {
     background: transparent;
     font-weight: bold;
     width: 100%;
+    color: #fff;
 }
-.team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
+.team-name:focus { outline: none; border-bottom: 1px solid rgba(255,255,255,0.3); }
 .score-row {
     display: flex;
     align-items: center;
@@ -86,11 +87,11 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: #ccc;
+    color: rgba(255,255,255,0.2);
     line-height: 1;
 }
 .miss.active {
-    color: red;
+    color: #ff5252;
     font-weight: bold;
 }
 .bottom {
@@ -110,30 +111,35 @@ body {
 .controls button {
     padding: 4px 8px;
     font-size: 12px;
-    border-radius: 8px;
-    border: 2px solid #ccc;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
     cursor: pointer;
     flex-grow: 1;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
 }
 .mode-toggle {
-    background: #eee;
+    background: rgba(126,211,33,0.15);
     padding: 4px 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 12px;
     cursor: pointer;
-    border-radius: 8px;
-    border: 2px solid #ccc;
+    border-radius: 20px;
+    border: 1px solid #7ed321;
+    color: #7ed321;
     user-select: none;
     flex-grow: 1;
 }
 .theme-selector {
     padding: 4px 8px;
     font-size: 12px;
-    border-radius: 8px;
-    border: 2px solid #ccc;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
     flex-grow: 1;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
 }
 .keys-area {
     display: flex;
@@ -148,9 +154,9 @@ body {
     gap: 10vmin;
 }
 .key {
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background: #eee;
+    border: none;
+    border-radius: 14px;
+    background: #1e4020;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -158,18 +164,22 @@ body {
     font-weight: bold;
     cursor: pointer;
     user-select: none;
+    color: #fff;
+    box-shadow: 0 4px 0 #0a1a0a;
 }
 .key:active {
-    background: #ddd;
+    background: #7ed321;
+    color: #0d1f0d;
     transform: scale(0.95);
+    box-shadow: none;
 }
 .undo-button {
     min-width: 15vmin;
-    background: #ff9800;
+    background: #ff6d00;
     color: white;
     font-weight: bold;
-    border: 3px solid #f57c00;
-    border-radius: 8px;
+    border: none;
+    border-radius: 14px;
     cursor: pointer;
     user-select: none;
     display: flex;
@@ -178,6 +188,7 @@ body {
     align-items: center;
     gap: 0.5vmin;
     padding: 1vmin;
+    box-shadow: 0 4px 0 #b34d00;
 }
 .undo-button .icon {
     font-size: 6vmin;
@@ -188,14 +199,15 @@ body {
     line-height: 1;
 }
 .undo-button:active {
-    background: #f57c00;
+    background: #e65100;
     transform: scale(0.95);
+    box-shadow: none;
 }
 .version {
     font-size: 14px;
     text-align: center;
     margin: 2px 0;
-    color: #666;
+    color: rgba(255,255,255,0.25);
 }
 @media screen and (orientation: landscape) {
     .container { flex-direction: column; }
@@ -239,7 +251,7 @@ body {
             <button onclick="removeTeam()">Team −</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
             <button onclick="forceReload()">再読込</button>
-            <button onclick="resetScores()" style="color:#c00;">得点リセット</button>
+            <button onclick="resetScores()" style="color:#ff5252;">得点リセット</button>
             <!-- ★ テーマ選択 -->
             <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
                 <option value="">default</option>
@@ -260,7 +272,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.4.3</div>
+        <div class="version">Ver 1.5.0</div>
     </div>
 </div>
 
