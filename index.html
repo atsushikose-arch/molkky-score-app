@@ -105,6 +105,7 @@ body {
     gap: 5px;
     justify-content: space-around;
     flex-wrap: wrap;
+    margin-bottom: 3vmin;
 }
 .controls button {
     padding: 4px 8px;
@@ -232,6 +233,7 @@ body {
             <button onclick="removeTeam()">Team −</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
             <button onclick="forceReload()">再読込</button>
+            <button onclick="resetScores()" style="color:#c00;">得点リセット</button>
             <!-- ★ テーマ選択 -->
             <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
                 <option value="">default</option>
@@ -252,7 +254,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.3.8</div>
+        <div class="version">Ver 1.3.9</div>
     </div>
 </div>
 
@@ -391,6 +393,12 @@ function changeTheme(theme) {
 function forceReload() {
     const url = location.href.split('?')[0] + '?v=' + Date.now();
     location.href = url;
+}
+function resetScores() {
+    if (!confirm('全チームの得点とミスをゼロにリセットしますか？')) return;
+    history.push(JSON.parse(JSON.stringify(teams)));
+    teams.forEach(t => { t.score = 0; t.misses = 0; });
+    render();
 }
 
 render();
