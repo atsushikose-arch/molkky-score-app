@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="モルックスコア">
 <title>みんなとモルックスコア</title>
 <link href="https://fonts.googleapis.com/css2?family=Rounded+M+1c:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -12,6 +15,8 @@ body {
     background: #fff;
     color: #000;
     height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
@@ -104,30 +109,30 @@ body {
     flex-wrap: wrap;
 }
 .controls button {
-    padding: 8px 12px;
-    font-size: 16px;
-    border-radius: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 8px;
     border: 2px solid #ccc;
     cursor: pointer;
     flex-grow: 1;
 }
 .mode-toggle {
     background: #eee;
-    padding: 8px;
+    padding: 4px 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    font-size: 12px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 2px solid #ccc;
     user-select: none;
     flex-grow: 1;
 }
 .theme-selector {
-    padding: 8px;
-    font-size: 16px;
-    border-radius: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 8px;
     border: 2px solid #ccc;
     flex-grow: 1;
 }
@@ -248,7 +253,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.3.2</div>
+        <div class="version">Ver 1.3.3</div>
     </div>
 </div>
 
