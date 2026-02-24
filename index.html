@@ -36,15 +36,45 @@ body {
 }
 .team {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 5px 8px;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 5px 4px;
     min-width: 120px;
     box-sizing: border-box;
     border-bottom: 3px solid transparent;
 }
 .team.selected { border-bottom: 3px solid #f9a825; background: #fff176; }
+.team-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+.member-list {
+    display: flex;
+    flex-direction: column;
+    padding-top: 3px;
+    margin-right: 3px;
+    flex-shrink: 0;
+    width: 7vmin;
+}
+.member-input {
+    font-size: 1.8vmin;
+    font-family: 'Rounded M+ 1c', sans-serif;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #ccc;
+    padding: 0;
+    margin: 1px 0;
+    outline: none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.member-input.current {
+    color: #e53935;
+    font-weight: bold;
+}
 .team-name {
     margin-bottom: 0;
     text-align: center;
@@ -274,14 +304,15 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.6.0</div>
+        <div class="version">Ver 1.7.0</div>
     </div>
 </div>
 
 <script>
+const EMPTY_MEMBERS = () => ["","","","","",""];
 let teams = [
-    { name: "チームA", score: 0, misses: 0 },
-    { name: "チームB", score: 0, misses: 0 },
+    { name: "チームA", score: 0, misses: 0, members: EMPTY_MEMBERS(), currentMember: 0 },
+    { name: "チームB", score: 0, misses: 0, members: EMPTY_MEMBERS(), currentMember: 0 },
 ];
 let selectedTeam = 0;
 let addMode = true;
@@ -319,6 +350,33 @@ function render() {
         const div = document.createElement("div");
         div.className = "team" + (index === selectedTeam ? " selected" : "");
 
+        // メンバーリスト（左側）
+        const memberList = document.createElement("div");
+        memberList.className = "member-list";
+        const filledCount = team.members.filter(m => m.trim() !== "").length;
+        let filledIndex = 0;
+        team.members.forEach((member, mi) => {
+            const inp = document.createElement("input");
+            inp.type = "text";
+            inp.className = "member-input";
+            inp.value = member;
+            inp.maxLength = 20;
+            if (member.trim() !== "") {
+                if (filledCount > 0 && filledIndex === team.currentMember % filledCount) {
+                    inp.classList.add("current");
+                }
+                filledIndex++;
+            }
+            inp.addEventListener("input", e => { team.members[mi] = e.target.value; });
+            inp.addEventListener("click", e => e.stopPropagation());
+            inp.addEventListener("pointerdown", e => e.stopPropagation(), { passive: true });
+            memberList.appendChild(inp);
+        });
+
+        // チームメインエリア
+        const teamMain = document.createElement("div");
+        teamMain.className = "team-main";
+
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.className = "team-name";
@@ -346,13 +404,15 @@ function render() {
         scoreRow.appendChild(scoreImg);
         scoreRow.appendChild(misses);
 
-        div.appendChild(nameInput);
-        div.appendChild(scoreRow);
+        teamMain.appendChild(nameInput);
+        teamMain.appendChild(scoreRow);
+
+        div.appendChild(memberList);
+        div.appendChild(teamMain);
         div.onclick = (e) => {
-        // 入力フィールドをクリックした場合は処理しない
-        if (e.target.classList.contains("team-name")) return;
-        selectedTeam = index;
-        render();
+            if (e.target.classList.contains("team-name") || e.target.classList.contains("member-input")) return;
+            selectedTeam = index;
+            render();
         };
         topElement.appendChild(div);
     });
@@ -384,6 +444,8 @@ function applyScore(value) {
         if (team.score > 50) team.score = 25;
         team.misses = 0;
         if (team.score === 50) celebrate(team.name);
+        const filledCount = team.members.filter(m => m.trim() !== "").length;
+        if (filledCount > 0) team.currentMember = (team.currentMember + 1) % filledCount;
     } else {
         team.score = Math.max(0, team.score - value);
     }
@@ -481,7 +543,7 @@ function celebrate(teamName) {
 
 function addTeam() {
     if (teams.length >= 10) return;
-    teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0 });
+    teams.push({ name: `チーム${String.fromCharCode(65 + teams.length)}`, score: 0, misses: 0, members: EMPTY_MEMBERS(), currentMember: 0 });
     render();
 }
 function removeTeam() {
@@ -508,7 +570,7 @@ function forceReload() {
 function resetScores() {
     if (!confirm('全チームの得点とミスをゼロにリセットしますか？')) return;
     history.push(JSON.parse(JSON.stringify(teams)));
-    teams.forEach(t => { t.score = 0; t.misses = 0; });
+    teams.forEach(t => { t.score = 0; t.misses = 0; t.currentMember = 0; });
     render();
 }
 
