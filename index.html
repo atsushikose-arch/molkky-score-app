@@ -63,13 +63,16 @@ body {
     font-family: 'Rounded M+ 1c', sans-serif;
     width: 100%;
     border: none;
+    border-bottom: 1px solid #e0e0e0;
     background: transparent;
-    color: #ccc;
+    color: #aaa;
     padding: 0;
     margin: 1px 0;
     outline: none;
     box-sizing: border-box;
-    overflow: hidden;
+}
+.member-input::placeholder {
+    color: #ddd;
 }
 .member-input.current {
     color: #e53935;
@@ -361,6 +364,7 @@ function render() {
             inp.className = "member-input";
             inp.value = member;
             inp.maxLength = 20;
+            inp.placeholder = "名前";
             if (member.trim() !== "") {
                 if (filledCount > 0 && filledIndex === team.currentMember % filledCount) {
                     inp.classList.add("current");
