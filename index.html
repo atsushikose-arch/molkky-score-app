@@ -221,6 +221,12 @@ body {
     .undo-button .text {
         font-size: 1.5vmin;
     }
+    .score {
+        max-height: 35vh;
+    }
+    .score img {
+        height: 30vh !important;
+    }
 }
 </style>
 </head>
@@ -254,7 +260,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.3.9</div>
+        <div class="version">Ver 1.4.0</div>
     </div>
 </div>
 
@@ -391,6 +397,7 @@ function changeTheme(theme) {
     render();
 }
 function forceReload() {
+    if (!confirm('最新版にリロードしますか？\n（入力中のスコアはリセットされます）')) return;
     const url = location.href.split('?')[0] + '?v=' + Date.now();
     location.href = url;
 }
