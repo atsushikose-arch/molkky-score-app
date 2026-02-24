@@ -12,8 +12,8 @@
 body {
     margin: 0;
     font-family: 'Rounded M+ 1c', sans-serif;
-    background: #0d1f0d;
-    color: #fff;
+    background: #f0f2f5;
+    color: #1a1a1a;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -28,7 +28,8 @@ body {
     display: flex;
     flex-wrap: nowrap;
     padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     flex: 0 1 auto;
     overflow: hidden;
     justify-content: center;
@@ -38,13 +39,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 5px;
+    padding: 5px 8px;
     min-width: 120px;
     box-sizing: border-box;
-    border: 2px solid transparent;
-    border-radius: 12px;
+    border-bottom: 3px solid transparent;
 }
-.team.selected { border: 2px solid #7ed321; background: rgba(126,211,33,0.12); }
+.team.selected { border-bottom: 3px solid #1565c0; background: rgba(21,101,192,0.04); }
 .team-name {
     margin-bottom: 0;
     text-align: center;
@@ -54,9 +54,9 @@ body {
     background: transparent;
     font-weight: bold;
     width: 100%;
-    color: #fff;
+    color: #1a1a1a;
 }
-.team-name:focus { outline: none; border-bottom: 1px solid rgba(255,255,255,0.3); }
+.team-name:focus { outline: none; border-bottom: 1px solid #aaa; }
 .score-row {
     display: flex;
     align-items: center;
@@ -87,11 +87,11 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: rgba(255,255,255,0.2);
+    color: #ddd;
     line-height: 1;
 }
 .miss.active {
-    color: #ff5252;
+    color: #e53935;
     font-weight: bold;
 }
 .bottom {
@@ -112,14 +112,15 @@ body {
     padding: 4px 8px;
     font-size: 12px;
     border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: none;
     cursor: pointer;
     flex-grow: 1;
-    background: rgba(255,255,255,0.08);
-    color: #fff;
+    background: #e0e0e0;
+    color: #333;
+    font-weight: bold;
 }
 .mode-toggle {
-    background: rgba(126,211,33,0.15);
+    background: #1565c0;
     padding: 4px 8px;
     display: flex;
     justify-content: center;
@@ -127,19 +128,20 @@ body {
     font-size: 12px;
     cursor: pointer;
     border-radius: 20px;
-    border: 1px solid #7ed321;
-    color: #7ed321;
+    border: none;
+    color: #fff;
     user-select: none;
     flex-grow: 1;
+    font-weight: bold;
 }
 .theme-selector {
     padding: 4px 8px;
     font-size: 12px;
     border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: none;
     flex-grow: 1;
-    background: rgba(255,255,255,0.08);
-    color: #fff;
+    background: #e0e0e0;
+    color: #333;
 }
 .keys-area {
     display: flex;
@@ -156,7 +158,7 @@ body {
 .key {
     border: none;
     border-radius: 14px;
-    background: #1e4020;
+    background: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -164,18 +166,18 @@ body {
     font-weight: bold;
     cursor: pointer;
     user-select: none;
-    color: #fff;
-    box-shadow: 0 4px 0 #0a1a0a;
+    color: #1a1a1a;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 .key:active {
-    background: #7ed321;
-    color: #0d1f0d;
+    background: #1565c0;
+    color: #fff;
     transform: scale(0.95);
     box-shadow: none;
 }
 .undo-button {
     min-width: 15vmin;
-    background: #ff6d00;
+    background: #1565c0;
     color: white;
     font-weight: bold;
     border: none;
@@ -188,7 +190,7 @@ body {
     align-items: center;
     gap: 0.5vmin;
     padding: 1vmin;
-    box-shadow: 0 4px 0 #b34d00;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 .undo-button .icon {
     font-size: 6vmin;
@@ -199,7 +201,7 @@ body {
     line-height: 1;
 }
 .undo-button:active {
-    background: #e65100;
+    background: #0d47a1;
     transform: scale(0.95);
     box-shadow: none;
 }
@@ -207,7 +209,7 @@ body {
     font-size: 14px;
     text-align: center;
     margin: 2px 0;
-    color: rgba(255,255,255,0.25);
+    color: #aaa;
 }
 @media screen and (orientation: landscape) {
     .container { flex-direction: column; }
@@ -251,7 +253,7 @@ body {
             <button onclick="removeTeam()">Team −</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
             <button onclick="forceReload()">再読込</button>
-            <button onclick="resetScores()" style="color:#ff5252;">得点リセット</button>
+            <button onclick="resetScores()" style="color:#e53935;">得点リセット</button>
             <!-- ★ テーマ選択 -->
             <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
                 <option value="">default</option>
@@ -272,7 +274,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.5.0</div>
+        <div class="version">Ver 1.5.1</div>
     </div>
 </div>
 
