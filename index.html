@@ -274,7 +274,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.5.1</div>
+        <div class="version">Ver 1.6.0</div>
     </div>
 </div>
 
@@ -383,10 +383,100 @@ function applyScore(value) {
         team.score += value;
         if (team.score > 50) team.score = 25;
         team.misses = 0;
+        if (team.score === 50) celebrate(team.name);
     } else {
         team.score = Math.max(0, team.score - value);
     }
     render();
+}
+
+function celebrate(teamName) {
+    const overlay = document.createElement('div');
+    overlay.id = 'celebrate-overlay';
+    Object.assign(overlay.style, {
+        position: 'fixed', top: '0', left: '0',
+        width: '100%', height: '100%',
+        zIndex: '1000', display: 'flex',
+        flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+        background: 'rgba(0,0,0,0.65)', cursor: 'pointer',
+    });
+
+    const canvas = document.createElement('canvas');
+    Object.assign(canvas.style, { position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' });
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const msg = document.createElement('div');
+    Object.assign(msg.style, {
+        position: 'relative', zIndex: '1',
+        color: '#fff', fontFamily: "'Rounded M+ 1c', sans-serif",
+        fontSize: '10vmin', fontWeight: 'bold', textAlign: 'center',
+        textShadow: '0 0 30px rgba(255,220,0,0.9)',
+        lineHeight: '1.4',
+    });
+    msg.innerHTML = `🏆<br>${teamName}<br><span style="font-size:7vmin">50点 達成！</span>`;
+
+    const hint = document.createElement('div');
+    Object.assign(hint.style, {
+        position: 'relative', zIndex: '1',
+        color: 'rgba(255,255,255,0.6)', fontFamily: "'Rounded M+ 1c', sans-serif",
+        fontSize: '3.5vmin', marginTop: '6vmin',
+    });
+    hint.textContent = 'タップで閉じる';
+
+    overlay.appendChild(canvas);
+    overlay.appendChild(msg);
+    overlay.appendChild(hint);
+    document.body.appendChild(overlay);
+
+    const ctx = canvas.getContext('2d');
+    const particles = [];
+    const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff922b','#f06595','#74c0fc','#ffe066','#fff'];
+
+    function burst(x, y) {
+        for (let i = 0; i < 70; i++) {
+            const angle = (Math.PI * 2 / 70) * i + Math.random() * 0.2;
+            const speed = 2 + Math.random() * 6;
+            particles.push({
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                alpha: 1,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                size: 3 + Math.random() * 3,
+                decay: 0.012 + Math.random() * 0.01,
+            });
+        }
+    }
+
+    const launches = [0, 300, 600, 900, 1200, 1500, 1800, 2200];
+    launches.forEach(delay => setTimeout(() => {
+        burst(canvas.width * (0.2 + Math.random() * 0.6), canvas.height * (0.1 + Math.random() * 0.5));
+    }, delay));
+
+    function animate() {
+        if (!document.getElementById('celebrate-overlay')) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx; p.y += p.vy;
+            p.vy += 0.12;
+            p.alpha -= p.decay;
+            if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    const autoClose = setTimeout(() => overlay.remove(), 6000);
+    overlay.onclick = () => { clearTimeout(autoClose); overlay.remove(); };
 }
 
 function addTeam() {
