@@ -153,7 +153,7 @@ body {
     font-weight: bold;
 }
 .mode-toggle {
-    background: #1565c0;
+    background: #43a047;
     padding: 4px 8px;
     display: flex;
     justify-content: center;
@@ -307,7 +307,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.7.2</div>
+        <div class="version">Ver 1.7.3</div>
     </div>
 </div>
 
@@ -431,6 +431,8 @@ function render() {
 
 function updateModeDisplay() {
     modeToggle.textContent = addMode ? "加点 Mode" : "減点 Mode";
+    modeToggle.style.background = addMode ? "#43a047" : "#ffcdd2";
+    modeToggle.style.color = addMode ? "#fff" : "#c62828";
 }
 modeToggle.onclick = () => { addMode = !addMode; updateModeDisplay(); };
 
