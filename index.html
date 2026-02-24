@@ -231,6 +231,7 @@ body {
             <button onclick="addTeam()">Team ＋</button>
             <button onclick="removeTeam()">Team −</button>
             <div id="modeToggle" class="mode-toggle">Mode</div>
+            <button onclick="forceReload()">再読込</button>
             <!-- ★ テーマ選択 -->
             <select id="themeSelector" class="theme-selector" onchange="changeTheme(this.value)">
                 <option value="">default</option>
@@ -251,7 +252,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.3.7</div>
+        <div class="version">Ver 1.3.8</div>
     </div>
 </div>
 
@@ -386,6 +387,10 @@ function undo() {
 function changeTheme(theme) {
     currentTheme = theme;
     render();
+}
+function forceReload() {
+    const url = location.href.split('?')[0] + '?v=' + Date.now();
+    location.href = url;
 }
 
 render();
