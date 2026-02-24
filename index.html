@@ -260,7 +260,7 @@ body {
                 <span class="text">元に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.4.0</div>
+        <div class="version">Ver 1.4.1</div>
     </div>
 </div>
 
@@ -397,7 +397,7 @@ function changeTheme(theme) {
     render();
 }
 function forceReload() {
-    if (!confirm('最新版にリロードしますか？\n（入力中のスコアはリセットされます）')) return;
+    if (!confirm('最新版にリロードしますか？\n（チーム名・チーム数・スコアがすべてリセットされます）')) return;
     const url = location.href.split('?')[0] + '?v=' + Date.now();
     location.href = url;
 }
