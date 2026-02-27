@@ -244,6 +244,11 @@ body {
     margin: 2px 0;
     color: #aaa;
 }
+@media screen and (orientation: portrait) {
+    .team-name { font-size: 5vmin; }
+    .score img { height: 10vh !important; }
+    .miss { font-size: 4vmin; }
+}
 @media screen and (orientation: landscape) {
     .container { flex-direction: column; }
     .bottom { flex-direction: column; }
@@ -308,7 +313,7 @@ body {
                 <span class="text">1つ前に戻す</span>
             </button>
         </div>
-        <div class="version">Ver 1.7.4</div>
+        <div class="version">Ver 1.7.5</div>
     </div>
 </div>
 
